@@ -27,7 +27,13 @@ namespace WissRech
         private int[] k_Wert;
  
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="T">Triangulierung</param>
+        /// <param name="N">Dimension</param>
+        /// <param name="N_boundary">Neumann Boundary</param>
+        /// <param name="D_boundary">Dirichlet boundary</param>
         public FEM(double[] T, int N, double[] N_boundary, double[] D_boundary) //N={1,2}, T speichert die Punkte der Triangulation, 1D: 2N, KONSTRUKTOR
         {
             this.T = T;

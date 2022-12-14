@@ -28,19 +28,7 @@ namespace WissRech
                 b[i] = 1;
                 txk[i] = 1;
             }
-            // cG = new CG(b, txk, 0, 10 * N + 1, "Hilbert");
-            //cG.run();
-            Vektoren bv = new Vektoren(b);
-            bv.multiply(2);
-            Vektoren xv = new Vektoren(txk);
-            Vektoren summe = new Vektoren(xv.add(bv).get_vektor());
-            Console.WriteLine("Der Vektor b ist:");
-            bv.Ausgabe();
-            Console.WriteLine("Der Vektore xv ist:");
-            xv.Ausgabe();
-            Console.WriteLine("Der Vektor x+b ist:");
-            summe.Ausgabe();
-            Console.ReadKey();
+
 
             double[] x = {0,0,0,1,1,1,0,0,1,1,0,1,1,0,1,1,2,1,1,0,2,0,2,1,0,1,1,1,1,2,0,1,1,2,0,2,1,1,2,1,2,2,1,1,2,2,1,2};
             double[] N_B = { 0, 1, 0, 2, 2, 1, 2, 2, 1, 2};
