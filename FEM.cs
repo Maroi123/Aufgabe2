@@ -47,6 +47,8 @@ namespace WissRech
             D_i_index = set_D(global_index,N_i_index);
             r_Wert = r_Werte(T);
             k_Wert = k_Werte(T);
+            
+           
         }
 
         public double[] point(double[] T) // legt Vektor mit Knoten der Triangulation an
@@ -202,7 +204,115 @@ namespace WissRech
             return erg_integral;
 
         }
+        /// <summary>
+        /// Rechnet das Produkt von vektoren aus
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <returns></returns>
+        /// <exception cref="InvalidOperationException"></exception>
+        private double produkt(double[] x, double[] y)
+        {
+            double outp = 0;
+            if (x.Length != y.Length)
+            {
+                throw new InvalidOperationException("Dimensionen passen nicht");
 
+            }
+            else
+            {
+                for (int i = 0; i < x.Length; i++)
+                {
+
+                    outp = outp + x[i] * y[i];
+                }
+                return outp;
+            }
+        }
+        /// <summary>
+        /// Implementiert das CG verfahren für die Matrix A
+        /// </summary>
+        /// <param name="eps">gewünschter Fehler</param>
+        /// <param name="xk">Startwert</param>
+        /// <param name="f">Rechte Seite f</param>
+        /// <param name="Iteration">Anzahl der maximalen iterationen</param>
+        private void CG_method(double eps, double[] xk, double[] f,int Iteration)
+        {
+            double fehler;
+            int dimension = xk.Length;
+            int i = 0;
+            double bk;
+            double ak;
+            double[] trk1 = new double[dimension];
+            double[] tdk1 = new double[dimension];
+            double[] xk1 = new double[dimension];
+            double[] vector = new double[dimension];
+            double[] trk = new double[dimension];
+            double[] tdk = new double[dimension];
+            
+            vector = stiffness_vec(xk);
+            for (int j = 0; j < dimension; j++)
+            {
+                trk[j] = f[j] - vector[j];
+                tdk[j] = trk[j];
+            }
+            do
+            {
+                vector = stiffness_vec(tdk);
+                if (produkt(tdk, vector) == 0)
+                {
+                    ak = 0;
+                }
+                else
+                {
+                    ak = produkt(trk, trk) / produkt(tdk, vector);
+                }
+
+                for (int j = 0; j < dimension; j++)
+                {
+                    xk1[j] = xk[j] + ak * tdk[j];
+                    trk1[j] = trk[j] - ak * vector[j];
+                }
+                if (produkt(trk, trk) == 0)
+                {
+                    bk = 0;
+                }
+                else
+                {
+                    bk = produkt(trk1, trk1) / produkt(trk, trk);
+                }
+
+                for (int j = 0; j < dimension; j++)
+                {
+                    tdk1[j] = trk1[j] + bk * tdk[j];
+                }
+
+                for (int j = 0; j < dimension; j++)
+                {
+                    xk[j] = xk1[j];
+                    tdk[j] = tdk1[j];
+                    trk[j] = trk1[j];
+
+                }
+                //berechne den fehler:
+                trk1 = stiffness_vec(xk);
+                for (int j = 0; j < dimension; j++)
+                {
+                    vector[j] = f[j] - trk1[j];
+                }
+                fehler = produkt(vector, vector);
+
+                i++;
+            } while (i < Iteration && fehler > eps);
+          
+
+        }
+        // Das hier ist mein A
+        /// <summary>
+        /// nimmt den Vektor x und rechnet Ax aus
+        /// </summary>
+        /// <param name="x">Vektor</param>
+        /// <returns>Ax</returns>
         public double[] stiffness_vec(double[] x)
         {
             double[] erg= new double[x.Length]; //Ergebnisvektor von Matrix-Vektor-Multiplikation, Länge x= Anzahl Knoten

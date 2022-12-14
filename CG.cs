@@ -15,6 +15,7 @@ namespace WissRech
         {
             return fehler;
         }
+       
         public double[] get_solution()
         {
             return solution;
