@@ -39,9 +39,7 @@ namespace WissRech
             D.print_global_indeces();
             D.print_set_i_N();
             D.print_set_D();
-           // D.number_triangles();
-           // Console.WriteLine("Haha"+D.K);
-           // Console.ReadKey(); 
+            
 
             for(int i = 0; i < 9; i++)
             {
