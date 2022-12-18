@@ -1,0 +1,15 @@
+C:\Users\alexb\Desktop\FEM_project\FEM_final\FEM_final\bin\Debug\net6.0\FEM_final.exe
+C:\Users\alexb\Desktop\FEM_project\FEM_final\FEM_final\bin\Debug\net6.0\FEM_final.deps.json
+C:\Users\alexb\Desktop\FEM_project\FEM_final\FEM_final\bin\Debug\net6.0\FEM_final.runtimeconfig.json
+C:\Users\alexb\Desktop\FEM_project\FEM_final\FEM_final\bin\Debug\net6.0\FEM_final.dll
+C:\Users\alexb\Desktop\FEM_project\FEM_final\FEM_final\bin\Debug\net6.0\FEM_final.pdb
+C:\Users\alexb\Desktop\FEM_project\FEM_final\FEM_final\obj\Debug\net6.0\FEM_final.csproj.AssemblyReference.cache
+C:\Users\alexb\Desktop\FEM_project\FEM_final\FEM_final\obj\Debug\net6.0\FEM_final.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\alexb\Desktop\FEM_project\FEM_final\FEM_final\obj\Debug\net6.0\FEM_final.AssemblyInfoInputs.cache
+C:\Users\alexb\Desktop\FEM_project\FEM_final\FEM_final\obj\Debug\net6.0\FEM_final.AssemblyInfo.cs
+C:\Users\alexb\Desktop\FEM_project\FEM_final\FEM_final\obj\Debug\net6.0\FEM_final.csproj.CoreCompileInputs.cache
+C:\Users\alexb\Desktop\FEM_project\FEM_final\FEM_final\obj\Debug\net6.0\FEM_final.dll
+C:\Users\alexb\Desktop\FEM_project\FEM_final\FEM_final\obj\Debug\net6.0\refint\FEM_final.dll
+C:\Users\alexb\Desktop\FEM_project\FEM_final\FEM_final\obj\Debug\net6.0\FEM_final.pdb
+C:\Users\alexb\Desktop\FEM_project\FEM_final\FEM_final\obj\Debug\net6.0\FEM_final.genruntimeconfig.cache
+C:\Users\alexb\Desktop\FEM_project\FEM_final\FEM_final\obj\Debug\net6.0\ref\FEM_final.dll
