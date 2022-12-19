@@ -224,7 +224,7 @@ namespace FEM_final
         /// <param name="xk">Startwert</param>
         /// <param name="f">Rechte Seite f</param>
         /// <param name="Iteration">Anzahl der maximalen iterationen</param>
-        private void CG_method(double eps, double[] xk, double[] f, int Iteration)
+        public double[] CG_method(double eps, double[] xk, double[] f, int Iteration)
         {
             double fehler;
             int dimension = xk.Length;
@@ -292,6 +292,8 @@ namespace FEM_final
 
                 i++;
             } while (i < Iteration && fehler > eps);
+
+            return xk;
 
 
         }

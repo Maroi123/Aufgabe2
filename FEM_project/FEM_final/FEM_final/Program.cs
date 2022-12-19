@@ -68,11 +68,20 @@ namespace FEM_final
             D.print_set_i_N();
             D.print_set_D();
             D.number_triangles();
-
-            Console.WriteLine("Vektor f von Au=f: ");
-            for(int i = 0; i < N*N; i++)
+            double[] u= new double[N];
+            double[] zero=new double[N];
+            for(int i = 0; i < zero.Length; i++)
             {
-                Console.WriteLine(D.global_load_vec()[i]);
+                zero[i] = 0;
+                u[i] = 0;
+            }
+
+            //Hier die CG-Methode aufrufen:
+            u=D.CG_method(0,zero, D.global_load_vec(), 3 * N);
+            Console.WriteLine("Vektor u von Au=f: ");
+            for(int i = 0; i < N; i++)
+            {
+                Console.WriteLine(u[i]);
             }
 
  
