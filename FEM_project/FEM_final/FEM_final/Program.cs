@@ -75,7 +75,7 @@ namespace FEM_final
                 zero[i] = 0;
                 u[i] = 0;
             }
-
+             
             //Hier die CG-Methode aufrufen:
             u=D.CG_method(0,zero, D.global_load_vec(), 3 * N);
             Console.WriteLine("Vektor u von Au=f: ");
