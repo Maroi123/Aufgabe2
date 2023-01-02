@@ -1,0 +1,54 @@
+import matplotlib as mpl
+from mpl_toolkits.mplot3d import Axes3D
+import numpy as np
+import matplotlib.pyplot as plt
+
+def f(x, y):        #definiere die funktion die geplottet werden soll
+    if(x+y<0):
+        return x*x+y*y
+    else:
+        return x*x-y*y
+fig = plt.figure()    
+ax = fig.gca(projection='3d')
+x1 = np.linspace(-6, 6, 100) #x achse aufteilung  
+y1 = np.linspace(-6, 6, 100)  #y achse aufteilung  (intervall(a,b) und anzahl der Punkte)
+x=np.zeros(x1.size)
+y=np.zeros(y1.size)
+
+for i in range(0,x.size):  #scatter in y richtung für jedes x
+    z=np.zeros(y1.size)
+    for k in range(0,x.size):
+        x[k]=x1[i]
+    for j in range(0,y1.size):    
+        z[j]=f(x[j],y1[j])  
+    ax.scatter(x, y1, z,color='blue',s=0.1)
+
+for j in range(0,y.size):   #scatter in x richtung für jedes y
+    z=np.zeros(x.size)
+    for k in range(0,y.size):
+        y[k]=y1[j]
+    for i in range(0,x.size):    
+        z[i]=f(x1[i],y[i])  
+    ax.scatter(x1, y, z,color='blue',s=0.1)
+
+    
+for j in range(0,y1.size):      # verbinden von den punkten für in x richtung für jedes y
+    for i in range(0,x1.size-1):
+        x2=[x1[i],x1[i+1]]
+        y2=[y1[j],y1[j]]
+        z2=[f(x2[0],y2[0]),f(x2[1],y2[1])]
+        ax.plot(x2, y2, z2,color='blue',linewidth=0.5)
+
+        
+for i in range(0,x1.size):      #verbinden von den punkten in y richtung für jedes x
+    for j in range(0,y1.size-1):
+        x2=[x1[i],x1[i]]
+        y2=[y1[j],y1[j+1]]
+        z2=[f(x2[0],y2[0]),f(x2[1],y2[1])]
+        ax.plot(x2, y2, z2,color='blue', linewidth=0.5)
+        
+        
+
+plt.xlabel("X-Achse")
+plt.ylabel("Y-Achse")
+plt.show()
