@@ -1,0 +1,23 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v6.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v6.0": {
+      "FEM_3012/1.0.0": {
+        "runtime": {
+          "FEM_3012.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "FEM_3012/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}
