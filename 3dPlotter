@@ -16,7 +16,7 @@ xt = []
 yt = []
 zt = []
 
-file1 = open('test1.txt', 'r')
+file1 = open('test.txt', 'r') #bei text.txt filename eintrage
 Lines = file1.readlines()  
 for line in Lines:    
     new_string = line.replace(",", "." )
