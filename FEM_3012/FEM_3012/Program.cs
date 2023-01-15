@@ -102,7 +102,7 @@ for (int i = 0; i < N; i++)
 }
 
 Console.WriteLine("det: "+ T.det_F_k(0));
-/*
+
 StreamWriter sr = new StreamWriter("C:\\Users\\alexb\\Desktop\\FEM_project\\FEM_3012\\test.txt", false);
 CultureInfo myCI = new CultureInfo("en-US", false);
 for (int i=0; i < N; i++)
@@ -110,5 +110,5 @@ for (int i=0; i < N; i++)
     sr.WriteLine(u[i].ToString()+ ";"+ points[0,i].ToString()+";"+ points[1,i].ToString(),myCI);
 }
 sr.Close();
-*/
+
 
