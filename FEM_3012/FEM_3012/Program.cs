@@ -6,7 +6,7 @@ using System.Runtime.CompilerServices;
 using Test;
 using System.IO;
 
-int dim = 5;
+int dim = 15;
 int N = dim * dim; //Anzahl nodes in Triangulation
 int K = 2 * (dim - 1) * (dim - 1); //Anzahl Dreiecke in Triangulation
 int [,] A= new int [3,K]; //Matrix A speichert globale Index der Dreiecke
@@ -92,8 +92,9 @@ for (int i = 0; i < zero.Length; i++)
     zero[i] = 1;
     u[i] = 0;
 }
-
-u = T.CG_method(0, zero, T.P_V(T.global_load_vec()), dim);
+double zer0 = 0;
+Console.WriteLine("Berechnet CG jetzt");
+u = T.CG_method(ref zer0, zero, T.P_V(T.global_load_vec()), ref dim);
 Console.WriteLine("Vektor u von Au=f: ");
 for (int i = 0; i < N; i++)
 {
@@ -101,7 +102,7 @@ for (int i = 0; i < N; i++)
 }
 
 Console.WriteLine("det: "+ T.det_F_k(0));
-
+/*
 StreamWriter sr = new StreamWriter("C:\\Users\\alexb\\Desktop\\FEM_project\\FEM_3012\\test.txt", false);
 CultureInfo myCI = new CultureInfo("en-US", false);
 for (int i=0; i < N; i++)
@@ -109,5 +110,5 @@ for (int i=0; i < N; i++)
     sr.WriteLine(u[i].ToString()+ ";"+ points[0,i].ToString()+";"+ points[1,i].ToString(),myCI);
 }
 sr.Close();
-
+*/
 

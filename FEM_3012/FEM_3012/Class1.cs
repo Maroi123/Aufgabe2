@@ -80,21 +80,23 @@ namespace Test
 
         public double[] global_stiffness_vec(double[]x) //berechnet Matrix-Vektor Produkt von rechter Seite von Au=f
         {
+            //Console.WriteLine("Matrixmul");
             double[] erg = new double[N];
             for(int i=0; i< N; i++)
             {
                 erg[i] = 0;
             }
-            for(int k= 0; k < K; k++) 
+            Parallel.For(0,K, k => 
             {
-                for (int i=0; i<N; i++)
+                double[,] B = local_stiffness(k);
+                Parallel.For(0, N, i =>
                 {
-                    for (int j=0;j<N; j++)
+                    Parallel.For(0, N, j =>
                     {
-                        double[,] B = local_stiffness(k);
+                        
                         for (int r = 0; r < M; r++)
                         {
-                            for(int s = 0; s < M; s++)
+                            for (int s = 0; s < M; s++)
                             {
                                 if (A[r, k] == i & A[s, k] == j)
                                 {
@@ -102,10 +104,13 @@ namespace Test
                                 }
                             }
                         }
-                    }
-
-                }
-            }
+                    });
+                    
+                });
+           
+            }); 
+          
+            //Console.WriteLine("matrixmul ende");
             return(erg);
         }
 
@@ -123,23 +128,25 @@ namespace Test
             return (erg);
         }
 
-        public double[] global_load_vec() //berechnet rechte Seite von Au=f
+        public double[] global_load_vec() //berechnet rechte Seite von Au=f  
         {
             double[] erg = new double[N];
-            for(int k= 0; k < K; k++)
+            Parallel.For(0, K, k =>
             {
                 double[] load_vec = local_load_vec(k);
-                for(int i = 0; i< N; i++)
+                Parallel.For(0, N, i =>
                 {
-                    for(int r = 0; r< M; r++)
+                    for (int r = 0; r < M; r++)
                     {
                         if (A[r, k] == i)
                         {
                             erg[i] += load_vec[r];
                         }
                     }
-                }
-            }
+                });
+             
+            });
+            
             //Console.WriteLine("Counter ist: " + counter);
             return (erg);
         }
@@ -172,35 +179,40 @@ namespace Test
             //Console.WriteLine("0,1 ist" + B[0, 1]);
             //Console.WriteLine("1,0 ist" + B[1, 0]);
             //Console.WriteLine("0,0 ist" + B[1, 1]);
-            if (r == 0) //hier wird F_k^(-T)  grad\psi_r berechnet (-1,-1), (1,0), (0,1)
+
+            switch (r)
             {
-                erg[0] = -B[0, 0] - B[1, 0];
-                erg[1] = -B[0, 1] - B[1, 1];
+                case 0:
+                    erg[0] = -B[0, 0] - B[1, 0];
+                    erg[1] = -B[0, 1] - B[1, 1];
+                    break;
+                case 1:
+                    erg[0] = B[0, 0];
+                    erg[1] = B[0, 1];
+                    break;
+                case 2:
+                    erg[0] = B[1, 0];
+                    erg[1] = B[1, 1];
+                    break;
+                    default:
+                    break;
             }
-            if (r == 1)
-            {
-                erg[0] = B[0, 0];
-                erg[1] = B[0, 1];
-            }
-            if (r == 2)
-            {
-                erg[0] = B[1, 0];
-                erg[1] = B[1, 1];
-            }
+   
             return (erg);
         }
 
         public double[] P_V(double[] x) //Projector on V
         {
             double[] y = new double[N];
-            for(int i = 0; i < N; i++)
+            Parallel.For(0, N, i =>
             {
-                y[i] = x[i];
-            }
-            for (int i = 0; i < D_index.Length; i++)
+                y[i] = x[i];   //mal gucken wie sinnvoll das ist
+            });
+
+            Parallel.For(0, D_index.Length, i =>
             {
                 y[D_index[i]] = 0;
-            }
+            });
             return(y);
         }
 
@@ -208,10 +220,11 @@ namespace Test
         {
             double[] erg = new double[N];
             double[] PV = P_V(y);
-            for(int i=0; i < N; i++)
+            Parallel.For(0, N, i =>
             {
-                erg[i] =y[i]- PV[i];
-            }
+                erg[i] = y[i] - PV[i];
+            });
+     
             
             return(erg);
    
@@ -227,10 +240,11 @@ namespace Test
                 Console.WriteLine(i + "  y_1  Test " + y_1[i]);
                 Console.WriteLine(i + "  y_2  Test " + y_2[i]);
             }*/
-            for (int i=0; i < N; i++)
+            Parallel.For(0, N, i =>
             {
                 y_1[i] = y_1[i] + y_2[i];
-            }
+            });
+       
             return(y_1);
         }
 
@@ -263,11 +277,11 @@ namespace Test
             }
             else
             {
-                for (int i = 0; i < x.Length; i++)
+                Parallel.For(0, x.Length, i =>
                 {
-
                     outp = outp + x[i] * y[i];
-                }
+                });
+             
                 return outp;
             }
         }
@@ -278,7 +292,7 @@ namespace Test
         /// <param name="xk">Startwert</param>
         /// <param name="f">Rechte Seite f</param>
         /// <param name="Iteration">Anzahl der maximalen iterationen</param>
-        public double[] CG_method(double eps, double[] xk, double[] f, int Iteration)
+        public double[] CG_method(ref double eps, double[] xk, double[] f, ref int Iteration)
         {
             double fehler;
             int dimension = xk.Length;
@@ -293,13 +307,15 @@ namespace Test
             double[] tdk = new double[dimension];
 
             vector = global_stiffness_vec_boundary(xk);
-            for (int j = 0; j < dimension; j++)
+            Parallel.For(0, dimension, j =>
             {
                 trk[j] = f[j] - vector[j];
                 tdk[j] = trk[j];
-            }
+            });         
             do
             {
+
+                //Console.WriteLine("Angefangen");
                 vector = global_stiffness_vec_boundary(tdk);
                 if (produkt(tdk, vector) == 0)
                 {
@@ -310,41 +326,45 @@ namespace Test
                     ak = produkt(trk, trk) / produkt(tdk, vector);
                 }
 
-                for (int j = 0; j < dimension; j++)
+                Parallel.For(0, dimension, j =>
                 {
                     xk1[j] = xk[j] + ak * tdk[j];
                     trk1[j] = trk[j] - ak * vector[j];
-                }
+                });    
+         
                 if (produkt(trk, trk) == 0)
                 {
                     bk = 0;
                 }
                 else
                 {
-                    bk = produkt(trk1, trk1) / produkt(trk, trk);
+                    bk = produkt(trk1, trk1) / produkt(trk, trk);  //frisst Laufzeit
                 }
 
-                for (int j = 0; j < dimension; j++)
+                Parallel.For(0, dimension, j =>
                 {
                     tdk1[j] = trk1[j] + bk * tdk[j];
-                }
+                });
 
-                for (int j = 0; j < dimension; j++)
+
+                Parallel.For(0, dimension, j =>
                 {
                     xk[j] = xk1[j];
                     tdk[j] = tdk1[j];
                     trk[j] = trk1[j];
-
-                }
+                }); 
+              
                 //berechne den fehler:
                 trk1 = global_stiffness_vec_boundary(xk);
-                for (int j = 0; j < dimension; j++)
+                Parallel.For(0, dimension, j =>
                 {
                     vector[j] = f[j] - trk1[j];
-                }
+                });
+       
                 fehler = produkt(vector, vector);
 
                 i++;
+               Console.WriteLine("CG Methode ist bei der " + i + " Iteration");
             } while (i < Iteration && fehler > eps);
 
             return xk;
