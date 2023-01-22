@@ -1,0 +1,65 @@
+import matplotlib as mpl
+from mpl_toolkits.mplot3d import Axes3D
+import numpy as np
+import matplotlib.pyplot as plt
+
+
+def f(xarr,yarr,zarr,x,y):   #kriege den z wert von x,y mit übergabe des arrays
+    for i in range(0,len(xarr)):
+        if xarr[i]==x:
+            if yarr[i]==y:
+                return zarr[i]
+    
+#Zum einlesen der Daten
+
+xt = []
+yt = []
+zt = []
+
+file1 = open('test.txt', 'r')
+Lines = file1.readlines()  
+for line in Lines:    
+    new_string = line.replace(",", "." )
+    new_string1=new_string.rstrip("\n")
+    textsplit=new_string1.split(";")
+    zt.append(float(textsplit[0]))
+    xt.append(float(textsplit[1]))
+    yt.append(float(textsplit[2]))
+#Listen ohne Duplicate zum verbessern der Laufzeit
+xd = list(dict.fromkeys(xt))
+yd = list(dict.fromkeys(yt))
+zd = list(dict.fromkeys(zt))
+
+
+#plotten der daten
+
+fig = plt.figure()    
+ax = fig.gca(projection='3d')
+
+
+
+
+for j in range(0,len(yd)): #plotten in x richtung 
+    for i in range(0,len(xd)-1):
+        x2=[xd[i],xd[i+1]]
+        y2=[yd[j],yd[j]]
+        z2=[f(xt,yt,zt,x2[0],y2[0]),f(xt,yt,zt,x2[1],y2[1])]
+        ax.plot(x2, y2, z2,color='blue',linewidth=0.5)
+    
+
+
+for i in range(0,len(xd)): #plotten in y richtung
+    for j in range(0,len(yd)-1):
+        x2=[xd[i],xd[i]]
+        y2=[yd[j],yd[j+1]]
+        z2=[f(xt,yt,zt,x2[0],y2[0]),f(xt,yt,zt,x2[1],y2[1])]
+        ax.plot(x2, y2, z2,color='blue',linewidth=0.5)
+        
+
+      
+        
+
+plt.xlabel("X-Achse")
+plt.ylabel("Y-Achse")
+plt.show()
+fig.savefig('to.png',bbox_inches='tight')
