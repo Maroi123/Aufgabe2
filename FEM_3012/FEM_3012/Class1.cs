@@ -59,7 +59,7 @@ namespace Test
         {
             double [,] mass=new double[M, M];
             double det = Math.Abs(det_F_k(k));
-            for (int r = 0; r < M; r++) //Zeile
+            Parallel.For(0, M, r =>
             {
                 for (int s = 0; s < M; s++) //Spalte
                 {
@@ -69,10 +69,12 @@ namespace Test
                     }
                     else
                     {
-                        mass[r,s]=det* (double)1 / (double)24;
+                        mass[r, s] = det * (double)1 / (double)24;
                     }
                 }
-            }
+            });
+            //Zeile
+            
 
             return (mass);
         }
@@ -80,39 +82,42 @@ namespace Test
       public double[,] global_mass()
         {
             double[,] C= new double[N,N];
-            for (int k = 0; k < K; k++)
+            Parallel.For(0, K, k =>
             {
-                double[,] loc_mass=local_mass(k); 
-                for(int i = 0; i < N; i++)
+                double[,] loc_mass = local_mass(k);
+                Parallel.For(0, N, i =>
                 {
-                    for(int j = 0; j < N; j++)
+                    Parallel.For(0, N, j =>
                     {
-                        for(int r = 0; r < M; r++)
+                        for (int r = 0; r < M; r++)
                         {
-                            for(int s = 0; s < M; s++)
+                            for (int s = 0; s < M; s++)
                             {
-                                if (A[r,k]==i & A[s, k] == j)
+                                if (A[r, k] == i & A[s, k] == j)
                                 {
-                                    C[i,j] += loc_mass[r, s];
-                                 
+                                    C[i, j] += loc_mass[r, s];
+
                                 }
                             }
                         }
-                    }
-                }  
-            }
+                    });
+
+                });
+                
+            });
+            
             return (C);
         }
 
-       public double[,] global_stiffness()
+        public double[,] global_stiffness()
         {
-            double[,] C=new double[N,N];
+            double[,] C = new double[N, N];
             for (int k = 0; k < K; k++)
             {
                 double[,] local_stiff = local_stiffness(k);
-                for (int i = 0; i < N; i++)
+                Parallel.For(0, N, i =>
                 {
-                    for (int j = 0; j < N; j++)
+                    Parallel.For(0, N, j =>
                     {
                         for (int r = 0; r < M; r++)
                         {
@@ -125,8 +130,10 @@ namespace Test
 
                             }
                         }
-                    }
-                }
+                    });
+                    
+                });
+                
             }
             return (C);
         }
@@ -134,13 +141,15 @@ namespace Test
         public double[] stiffness_vec(double[] x)
         {
             double[]erg= new double[N];
-            for(int i= 0; i < N; i++)
+            Parallel.For(0, N, i =>
             {
-                for(int j = 0; j < N; j++)
+                Parallel.For(0, N, j =>
                 {
                     erg[i] += stiffness[i, j] * x[j];
-                }
-            }
+                });
+         
+            });
+           
             return (x);
         }
 
@@ -162,20 +171,21 @@ namespace Test
         public double[] global_load_vec() //berechnet rechte Seite von Au=f
         {
             double[] erg = new double[N];
-            for(int k= 0; k < K; k++)
+            Parallel.For(0, K, k =>
             {
                 double[] load_vec = local_load_vec(k);
-                for(int i = 0; i< N; i++)
+                Parallel.For(0, N, i =>
                 {
-                    for(int r = 0; r< M; r++)
+                    for (int r = 0; r < M; r++)
                     {
                         if (A[r, k] == i)
                         {
                             erg[i] += load_vec[r];
                         }
                     }
-                }
-            }
+                });
+
+            });
             //Console.WriteLine("Counter ist: " + counter);
             return (erg);
         }
@@ -204,48 +214,51 @@ namespace Test
             B[1, 0] = 1/det*(p(k, 0, 1) - p(k, 1, 1));
             B[1, 1] = 1/det*(p(k, 1, 0) - p(k, 0, 0));
 
-            if (r == 0) //hier wird F_k^(-T)  grad\psi_r berechnet (-1,-1), (1,0), (0,1)
-            {
-                erg[0] = -B[0, 0] - B[1, 0];
-                erg[1] = -B[0, 1] - B[1, 1];
-            }
-            if (r == 1)
-            {
-                erg[0] = B[0, 0];
-                erg[1] = B[0, 1];
-            }
-            if (r == 2)
-            {
-                erg[0] = B[1, 0];
-                erg[1] = B[1, 1];
-            }
+          
+                switch (r)//hier wird F_k^(-T)  grad\psi_r berechnet (-1,-1), (1,0), (0,1)
+                {
+                    case 0:
+                        erg[0] = -B[0, 0] - B[1, 0];
+                        erg[1] = -B[0, 1] - B[1, 1];
+                        break;
+                    case 1:
+                        erg[0] = B[0, 0];
+                        erg[1] = B[0, 1];
+                        break;
+                    case 2:
+                        erg[0] = B[1, 0];
+                        erg[1] = B[1, 1];
+                        break;
+                    default:
+                        break;
+                }
             return (erg);
         }
 
         public double[] P_V(double[] x) //Projector on V
         {
             double[] y = new double[N];
-            for(int i = 0; i < N; i++)
+            Parallel.For(0, N, i =>
             {
-                y[i] = x[i];
-            }
-            for (int i = 0; i < D_index.Length; i++)
+                y[i] = x[i];   
+            });
+
+            Parallel.For(0, D_index.Length, i =>
             {
                 y[D_index[i]] = 0;
-            }
-            return(y);
+            });
+            return (y);
         }
 
         public double [] P_D(double[]  y) //Projector on D
         {
             double[] erg = new double[N];
             double[] PV = P_V(y);
-            for(int i=0; i < N; i++)
+            Parallel.For(0, N, i =>
             {
-                erg[i] =y[i]- PV[i];
-            }
-            
-            return(erg);
+                erg[i] = y[i] - PV[i];
+            });
+            return (erg);
    
         }
 
@@ -292,19 +305,21 @@ namespace Test
 
         public double[] vec_add(double[] x, double[] y)
         {
-            for(int i = 0; i < x.Length; i++)
+            Parallel.For(0, x.Length, i =>
             {
-                x[i] += y[i];  
-            }
+                x[i] += y[i];
+            });
+ 
             return(x);
         }
 
         public double[] vec_subtract(double[] x, double[] y)
         {
-            for (int i = 0; i < x.Length; i++)
+            Parallel.For(0, x.Length, i =>
             {
                 x[i] -= y[i];
-            }
+            });
+        
             return (x);
         }
 
@@ -328,11 +343,12 @@ namespace Test
             }
             else
             {
-                for (int i = 0; i < x.Length; i++)
+                Parallel.For(0, x.Length, i =>
                 {
 
                     outp = outp + x[i] * y[i];
-                }
+                });
+ 
                 return outp;
             }
         }
@@ -345,6 +361,7 @@ namespace Test
         /// <param name="Iteration">Anzahl der maximalen iterationen</param>
         public double[] CG_method(double eps, double[] xk, double[] f, int Iteration)
         {
+            Console.WriteLine("Starte CG now");
             double fehler;
             int dimension = xk.Length;
             int i = 0;
@@ -358,13 +375,15 @@ namespace Test
             double[] tdk = new double[dimension];
 
             vector = global_stiffness_vec_boundary(xk);
-            for (int j = 0; j < dimension; j++)
+            Parallel.For(0, dimension, j =>
             {
                 trk[j] = f[j] - vector[j];
                 tdk[j] = trk[j];
-            }
+            });
             do
             {
+
+                //Console.WriteLine("Angefangen");
                 vector = global_stiffness_vec_boundary(tdk);
                 if (produkt(tdk, vector) == 0)
                 {
@@ -375,38 +394,41 @@ namespace Test
                     ak = produkt(trk, trk) / produkt(tdk, vector);
                 }
 
-                for (int j = 0; j < dimension; j++)
+                Parallel.For(0, dimension, j =>
                 {
                     xk1[j] = xk[j] + ak * tdk[j];
                     trk1[j] = trk[j] - ak * vector[j];
-                }
+                });
+
                 if (produkt(trk, trk) == 0)
                 {
                     bk = 0;
                 }
                 else
                 {
-                    bk = produkt(trk1, trk1) / produkt(trk, trk);
+                    bk = produkt(trk1, trk1) / produkt(trk, trk);  //frisst Laufzeit
                 }
 
-                for (int j = 0; j < dimension; j++)
+                Parallel.For(0, dimension, j =>
                 {
                     tdk1[j] = trk1[j] + bk * tdk[j];
-                }
+                });
 
-                for (int j = 0; j < dimension; j++)
+
+                Parallel.For(0, dimension, j =>
                 {
                     xk[j] = xk1[j];
                     tdk[j] = tdk1[j];
                     trk[j] = trk1[j];
+                });
 
-                }
                 //berechne den fehler:
                 trk1 = global_stiffness_vec_boundary(xk);
-                for (int j = 0; j < dimension; j++)
+                Parallel.For(0, dimension, j =>
                 {
                     vector[j] = f[j] - trk1[j];
-                }
+                });
+
                 fehler = produkt(vector, vector);
 
                 i++;
